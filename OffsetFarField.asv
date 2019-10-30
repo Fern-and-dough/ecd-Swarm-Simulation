@@ -2,16 +2,8 @@
 %Description:   This function will calculate the FarField Pattern with
 %               random offset introduced to the swarm_x,y,and z values 
 %               within a maximum error amount provided. 
-%--------------------------------------------------------------------------
-%INPUT:         swarm_xy (All drone x and y positions in the swarm)
-%               swarm_z (All drone z positions in the swarm)
-%               MAX_ERROR_ALLOWED (Specified in [m])
-%               FREQUENCY (Operating frequency in [hz])
-%               NUM_DRONES
-%--------------------------------------------------------------------------               
-%OUTPUT:        offset_pos (All offset x,y,and z positions in the swarm)
-%               OffsetField (The Farfield Pattern of the offset swarm)
-%--------------------------------------------------------------------------
+%          
+
 function [offset_pos, OffsetField] = OffsetFarField(swarm_xy, swarm_z, MAX_ERROR_ALLOWED, FREQUENCY, NUM_DRONES)
 c = 2.9992458*(10.^8);
 u0 = 4*pi*(10.^-7);

@@ -1,14 +1,16 @@
 %Name:          CalcZPos
-%Description:   This function will calculate the required z values needed
-%               for each drone in the swarm to achieve overall beam
-%               direction.
+%Description:   This function will calculate the needed 
+%               random offset introduced to the swarm_x,y,and z values 
+%               within a maximum error amount provided. 
 %--------------------------------------------------------------------------
 %INPUT:         swarm_xy (All drone x and y positions in the swarm)
-%               BEAM_DIRECTION (Desired beam direction)
+%               swarm_z (All drone z positions in the swarm)
+%               MAX_ERROR_ALLOWED (Specified in [m])
 %               FREQUENCY (Operating frequency in [hz])
 %               NUM_DRONES
 %--------------------------------------------------------------------------               
-%OUTPUT:        swarm_z (All drone z positions in the swarm)
+%OUTPUT:        offset_pos (All offset x,y,and z positions in the swarm)
+%               OffsetField (The Farfield Pattern of the offset swarm)
 %--------------------------------------------------------------------------
 function [swarm_z] = CalcZPos(swarm_xy, BEAM_DIRECTION, FREQUENCY,NUM_DRONES)
 c = 2.9992458*(10.^8);
@@ -26,6 +28,7 @@ phi_s = atan2(ys,xs);
 phi = 0:0.01:2*pi;
 Kn = 0;
 swarm_z = zeros(NUM_DRONES,1);
+
 for i = 1:NUM_DRONES
     xp = swarm_xy(i,1);
     yp = swarm_xy(i,2);
