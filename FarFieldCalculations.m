@@ -11,6 +11,12 @@ clear
 % SWARM_RADIUS = input('Input the swarm radius: ');
 % MAX_ERROR_ALLOWED input('Input the max allowed position error: ');
 % Kn = input('Specify kn''s coefficient: ');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% BEGIN FORM REQUEST AND RETURN VALUES  %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[ ExcelRead, Defaults, Formation, Center, Offset, Rotate] = GenerateForm();
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%  VARIABLES  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
