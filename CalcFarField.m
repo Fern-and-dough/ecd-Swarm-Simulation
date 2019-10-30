@@ -1,6 +1,15 @@
+%Name:          CalcFarField Function
+%Description:   This function will calculate the FarField Pattern of a
+%               given swarm.
+%--------------------------------------------------------------------------
+%INPUT:         swarm_xy (All drone x and y positions in the swarm)
+%               swarm_z (All drone z positions in the swarm)
+%               FREQUENCY (Operating frequency in [hz])
+%               NUM_DRONES
+%--------------------------------------------------------------------------               
+%OUTPUT:        Eq (The Farfield Pattern of the swarm)
+%--------------------------------------------------------------------------
 function [Eq] = CalcFarField(swarm_xy, swarm_z, FREQUENCY, NUM_DRONES)
-%CALCFARFIELD Summary of this function goes here
-%   Detailed explanation goes here
 Eq = 0;c = 2.9992458*(10.^8);u0 = 4*pi*(10.^-7);
 e0 = 1/((c.^2)*(u0));w = 2 * pi * FREQUENCY;
 k0 = w*sqrt(u0*e0);center_of_swarm = [25,0,100];

@@ -20,10 +20,9 @@ BEAM_DIRECTION = 45;        % Initial direction of beam in degrees
 BEAM_DIRECTION_2 = 270;     % Second beam direction in degrees
 FREQUENCY = 1.2 * 10^(9);   % Frequency in Hz
 MAX_ERROR_ALLOWED = .01;    % Used to show effects of misplacements in xy
-SWARM_RADIUS = (6.25/100);       % Position of drones in cross pattern
+SWARM_RADIUS = (50/100);       % Position of drones in cross pattern
 NUM_DRONES = 5;
 Kn=0;  
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%  Generate Cross XY positions  %%%%%%%%%%%%%%%%%%
