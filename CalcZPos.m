@@ -23,7 +23,6 @@ zs = center_of_swarm(3);
 rs = norm(center_of_swarm);
 theta_s = acos(zs/rs);
 phi_s = atan2(ys,xs);
-phi = 0:0.01:2*pi;
 Kn = 0;
 swarm_z = zeros(NUM_DRONES,1);
 for i = 1:NUM_DRONES
