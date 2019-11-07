@@ -1,19 +1,19 @@
-%Name:          GenerateFormations
+%Name:          GenerateSwarms
 %Description:   This function will take in user input "Formation" and
 %               "Center", producing crossXY and pentXY formations as
 %               needed.
 %--------------------------------------------------------------------------
-%INPUT:         Formation ("*Cross*", "Pentagon", or ["Cross","Pentagon"]
+%INPUT:         Formation ("*Cross*", "Pentagon", or "Both")
 %               Center ("*Yes*" or "No")
 %--------------------------------------------------------------------------               
 %OUTPUT:        crossXY (Returns crossXY antenna positions, or 0)
 %               pentXY (Returns pentXY antenna positions, or 0)
 %
 %NOTE: All Asterisk options are default form values
-function [crossXY,pentXY] = GenerateFormations(Formation, Center,SWARM_RADIUS)
+function [crossXY,pentXY] = GenerateSwarms(Formation, Center,SWARM_RADIUS)
 
 %# of drones needed in each swarm
-CROSS = 5; 
+CROSS = 5;
 PENT = 6;
 %------------------------------------------------------
 %Both Formations, Center Elements
@@ -48,7 +48,7 @@ if(Formation == "Pentagon" && Center == "Yes")
 end
 %Cross Formation, No Center Element
 if(Formation == "Pentagon" && Center == "No")
-    [pentXY] = SwarmNoCenter(CROSS,SWARM_RADIUS);
+    [pentXY] = SwarmNoCenter(PENT,SWARM_RADIUS);
     crossXY = 0;
 end
 end

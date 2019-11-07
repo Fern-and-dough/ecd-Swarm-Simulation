@@ -1,4 +1,4 @@
-%Name:          GenerateFormations
+%Name:          GenerateSwarms
 %Description:   This function will take in user input "Formation" and
 %               "Center", producing crossXY and pentXY formations as
 %               needed.
@@ -15,7 +15,7 @@ function [crossXY,pentXY] = GenerateFormations(Formation, Center,SWARM_RADIUS)
 %# of drones needed in each swarm
 CROSS = 5; 
 PENT = 6;
-
+%------------------------------------------------------
 %Both Formations, Center Elements
 if(Formation == "Both" && Center == "Yes")
     [crossXY] = SwarmWithCenter(CROSS,SWARM_RADIUS);
@@ -27,36 +27,29 @@ if(Formation == "Both" && Center == "No")
     [crossXY] = SwarmNoCenter(CROSS,SWARM_RADIUS);
     [pentXY] = SwarmNoCenter(PENT,SWARM_RADIUS);
 end
-
+%------------------------------------------------------
 %Cross Formation, Center Element
 if(Formation == "Cross" && Center == "Yes")
     [crossXY] = SwarmWithCenter(CROSS,SWARM_RADIUS);
     pentXY = 0;
 end
-
 %Cross Formation, No Center Element
+if(Formation == "Cross" && Center == "No")
+    [crossXY] = SwarmNoCenter(CROSS,SWARM_RADIUS);
+    pentXY = 0;
+end
+
+%------------------------------------------------------
+
+%Pentagon Formation, Center Element
 if(Formation == "Pentagon" && Center == "Yes")
     [pentXY] = SwarmWithCenter(PENT,SWARM_RADIUS);
     crossXY = 0;
 end
-
-if(Formation == "Cross" && Center == "No")
-    % Generate Cross Swarm Pattern
-    % WITHOUT Center Antenna in the Middle
-    % With NUM_Drones - 1 antennas evenly spaced around the center
-    
-end
-
+%Cross Formation, No Center Element
 if(Formation == "Pentagon" && Center == "No")
-    % Generate Pentagon Swarm Pattern
-    % WITHOUT Center Antenna in the Middle
-    % With NUM_Drones antennas evenly spaced aroudn the center
-    pentXY = zeros(NUM_DRONES-1, 2);
-    inc = 2 * pi / (NUM_DRONES-1);
-    for i = 1:NUM_DRONES
-        angle = i * inc;
-        [pentXY(i,1), pentXY(i,2)] = pol2cart(angle, SWARM_RADIUS);
-    end
+    [pentXY] = SwarmNoCenter(CROSS,SWARM_RADIUS);
+    crossXY = 0;
 end
 end
 

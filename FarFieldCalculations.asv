@@ -16,7 +16,6 @@
 %--------------------------------------------------------------------------
 clc
 clear
-close all
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% BEGIN FORM REQUEST AND RETURN VALUES  %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,15 +87,12 @@ phi_s = atan2(ys,xs); phi = 0:0.01:2*pi;
 % Generate Far Field pattern for original beam direction.
 %TO DO: Implement Form option *Formation* to create both Patterns
 
-% [crossField,pentField] = GenerateFarFields(Formation,Center,crossXY,pentXY,crossZ,pentZ,FREQUENCY,NUM_DRONES);
-
 if(Formation == "Cross")
-    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, NUM_DRONES);
+    InitialField = CalcFarField(crossXY, crossZ, FREQUENCY, NUM_DRONES);
 end
 if(Formation == "Pentagon")
-    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, NUM_DRONES);
+    pentPattern = CalcFarField(pentXY, pentZ, FREQUENCY, NUM_DRONES);
 end
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Recalculation using new theta  %%%%%%%%%%%%%%%%%
@@ -143,21 +139,21 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if(Formation == "Cross")
-norm = max(crossField);     % Get max val to normalize
+norm = max(InitialField);     % Get max val to normalize
 figure(1);
 tiledlayout(1,1)
 nexttile;
-polarplot(phi, abs(crossField)/abs(norm));  
+polarplot(phi, abs(InitialField)/abs(norm));  
 title('Cross Far Field Plot')
 rlim([0 1]);
 end
 
 if(Formation == "Pentagon")
-norm = max(pentField);     % Get max val to normalize
+norm = max(pentPattern);     % Get max val to normalize
 figure(1);
 tiledlayout(1,1)
 nexttile;
-polarplot(phi, abs(pentField)/abs(norm));  
+polarplot(phi, abs(pentPattern)/abs(norm));  
 title('Pentagon Far Field Plot')
 rlim([0 1]);
 end
@@ -246,7 +242,7 @@ end
 
 if(Offset == "Cross") %TEMPORARY IF, until implementation complete
 nexttile;
-polarplot(phi, abs(crossField)/abs(norm));
+polarplot(phi, abs(InitialField)/abs(norm));
 rlim([0 1]);
 title('Effect on Far Field Pattern')
 hold on
@@ -258,63 +254,63 @@ end
 %%%%%%%%%%%%%%  Generate rotating swarm positions  %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(Offset == "Cross")
-    xyRotate = zeros(NUM_DRONES,360,3); % holds antennas' rotating xy positions
-    for m = 2:NUM_DRONES
-        xyRotate(m,1,1) = crossXY(m,1);
-        xyRotate(m,1,2) = crossXY(m,2);
-        theta0 = atan(crossXY(m,2)/crossXY(m,1));
-        for i = 2:360
-            theta0 = theta0 + (pi/180);
-            xyRotate(m,i,1) = SWARM_RADIUS * cos(theta0);
-            xyRotate(m,i,2) = SWARM_RADIUS * sin(theta0);
-                if m == 4||m==3      % done to fix sign errors
-                    xyRotate(m,i,1)= -xyRotate(m,i,1);
-                    xyRotate(m,i,2)= -xyRotate(m,i,2);
-                end
-        end
+xyRotate = zeros(NUM_DRONES,360,3); % holds antennas' rotating xy positions
+for m = 2:NUM_DRONES
+    xyRotate(m,1,1) = crossXY(m,1);
+    xyRotate(m,1,2) = crossXY(m,2);
+    theta0 = atan(crossXY(m,2)/crossXY(m,1));
+    for i = 2:360
+        theta0 = theta0 + (pi/180);
+        xyRotate(m,i,1) = SWARM_RADIUS * cos(theta0);
+        xyRotate(m,i,2) = SWARM_RADIUS * sin(theta0);
+            if m == 4||m==3      % done to fix sign errors
+                xyRotate(m,i,1)= -xyRotate(m,i,1);
+                xyRotate(m,i,2)= -xyRotate(m,i,2);
+            end
     end
+end
 
-    for m = 1:NUM_DRONES    % This loop assigns the z positions.
-        for i = 1:360       % The drones hold their same z pos as they rotate.
-             xyRotate(m,i,3) = crossZ(m); 
-        end
+for m = 1:NUM_DRONES    % This loop assigns the z positions.
+    for i = 1:360       % The drones hold their same z pos as they rotate.
+         xyRotate(m,i,3) = crossZ(m); 
     end
+end
 
-    % figure(3);
-    % choice = 2; %from 1-5
-    % scatter(xyRotate(choice,:,1),xyRotate(choice,:,2),[],(1:size(xyRotate,2)).','.');
-    % colormap(jet) %From blue to red for Drone 2
-    % title('Rotating swarm xy')
-    % hold off
+% figure(3);
+% choice = 2; %from 1-5
+% scatter(xyRotate(choice,:,1),xyRotate(choice,:,2),[],(1:size(xyRotate,2)).','.');
+% colormap(jet) %From blue to red for Drone 2
+% title('Rotating swarm xy')
+% hold off
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%  Generate rotating Far Field  %%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    for m = 1:360
-        Mag=0;
-        for i = 1:5
-            xp = xyRotate(i,m,1);
-            yp = xyRotate(i,m,2);
-            zp = xyRotate(i,m,3);
-            alt1 = -k0 * xp * sin(theta_s) * cos(phi_s);
-            alt2 = alt1 - k0 * yp * sin(theta_s) * sin(phi_s);
-            alt3 = alt2 - k0 * zp * cos(theta_s);
-            alt4 = exp(j * alt3);
-            alt5 = alt4 * exp( j * k0 * (xp * cos(BEAM_DIRECTION) + yp * sin(BEAM_DIRECTION) ) );
-            Mag = Mag + alt5;
-        end
-        rotMagnitudes(m) = Mag;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%  Generate rotating Far Field  %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for m = 1:360
+    Mag=0;
+    for i = 1:5
+        xp = xyRotate(i,m,1);
+        yp = xyRotate(i,m,2);
+        zp = xyRotate(i,m,3);
+        alt1 = -k0 * xp * sin(theta_s) * cos(phi_s);
+        alt2 = alt1 - k0 * yp * sin(theta_s) * sin(phi_s);
+        alt3 = alt2 - k0 * zp * cos(theta_s);
+        alt4 = exp(j * alt3);
+        alt5 = alt4 * exp( j * k0 * (xp * cos(BEAM_DIRECTION) + yp * sin(BEAM_DIRECTION) ) );
+        Mag = Mag + alt5;
     end
+    rotMagnitudes(m) = Mag;
+end
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%  Graphing Rotating Far Field  %%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    inc = pi/180;
-    phi = inc:inc:2*pi; % phi is 360 degrees at intervals of 1 degree
-    normRotate = max(rotMagnitudes);     % Get max val to normalize
-    figure(3);
-    polarplot(phi, abs(rotMagnitudes)/abs(normRotate));
-    title('Rotating swarm FarField')
-    hold off;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%  Graphing Rotating Far Field  %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+inc = pi/180;
+phi = inc:inc:2*pi; % phi is 360 degrees at intervals of 1 degree
+normRotate = max(rotMagnitudes);     % Get max val to normalize
+figure(3);
+polarplot(phi, abs(rotMagnitudes)/abs(normRotate));
+title('Rotating swarm FarField')
+hold off;
 
 end

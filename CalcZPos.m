@@ -34,6 +34,6 @@ for i = 1:NUM_DRONES
     alt4 = k0 * yp * sind(BEAM_DIRECTION);
     const = 1/(cos(theta_s)*k0);
     swarm_z(i) = const * ( alt1 + alt2 + alt3 + alt4 + (Kn*(c/FREQUENCY)));
-end
+    end
 end
 

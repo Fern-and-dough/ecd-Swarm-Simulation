@@ -7,9 +7,9 @@
 %--------------------------------------------------------------------------               
 %OUTPUT:        ExcelRead ("Yes" or "*No*")
 %               Defaults ("*Yes*" or "No")
-%               Formation ("*Cross*", "Pentagon", or ["Cross","Pentagon"]
+%               Formation ("*Cross*", "Pentagon", or "Both)
 %               Center ("*Yes*" or "No")
-%               Offset ("Cross", "Pentagon", "Both", or "*None*"
+%               Offset ("Cross", "Pentagon", "Both", or "*None*")
 %               Rotate ("*Reciever*" or "Drones")
 %
 %NOTE: All Asterisk options are default form values
@@ -172,9 +172,9 @@ if(FormRead == "true")
 else
     ExcelRead = "No";
     Defaults = "Yes";
-    Formation = "Cross";
-    Center = "Yes";
-    Offset = "Cross";
+    Formation = "Pentagon";
+    Center = "No";
+    Offset = "Pentagon";
     Rotate = "Reciever";
 end
 end
