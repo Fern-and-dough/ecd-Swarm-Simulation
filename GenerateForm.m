@@ -16,12 +16,12 @@
 %--------------------------------------------------------------------------
 function [ ExcelRead, Defaults, Formation, Center, Offset, Rotate] = GenerateForm(FormRead)
 if(FormRead == "true")
-    yes_no_prompt = {"Yes","No"};
+    yes_no_prompt = ["Yes","No"];
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%  Excel Form  %%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    excel_prompt = {"Would you like to import data from a spreadsheet?"};
+    excel_prompt = ["Would you like to import data from a spreadsheet?"];
 
     [indx,tf] = listdlg('ListSize',[400,50],...
                         'PromptString',excel_prompt,...
@@ -39,8 +39,8 @@ if(FormRead == "true")
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%  Default or User Entered Values Form  %%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    specify_prompt = {"Would you like to specify values or use defaults?"};
-    specify_response_prompt = {"Use Default Values","Specify Values"};
+    specify_prompt = ["Would you like to specify values or use defaults?"];
+    specify_response_prompt = ["Use Default Values","Specify Values"];
 
     [indx,tf] = listdlg('ListSize',[400,50],...
                         'PromptString',specify_prompt,...
@@ -59,19 +59,19 @@ if(FormRead == "true")
     %%%%%%%%%%%%%%  Select Drone Configurations Form  %%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    formation_prompt={"Which Drone Configuration(s) would you like to plot?"};
-    formation_response_prompt = {"Cross","Pentagon"};
+    formation_prompt=["Which Drone Configuration(s) would you like to plot?"];
+    formation_response_prompt = ["Cross","Pentagon","Both"];
 
     [indx,tf] = listdlg('ListSize',[400,50],...
                         'PromptString',formation_prompt,...
-                        'SelectionMode','multiple',...
+                        'SelectionMode','single',...
                         'ListString',formation_response_prompt);
     if(indx == 1)
         Formation = "Cross";
     elseif(indx == 2)
         Formation = "Pentagon";
     else
-        Formation = ["Cross","Pentagon"];
+        Formation = ["Both"];
     end 
     if(tf == 0)
         Formation = "Cross";
@@ -80,7 +80,7 @@ if(FormRead == "true")
     %%%%%%%%%%%%%%%%%%%%%%%%  Center Antennas Form %%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    center_prompt={"Would you like for an antenna to be placed in the center?"};
+    center_prompt=["Would you like for an antenna to be placed in the center?"];
 
     [indx,tf] = listdlg('ListSize',[400,50],...
                         'PromptString',center_prompt,...
@@ -98,17 +98,17 @@ if(FormRead == "true")
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%  Offset Graphs Form  %%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    offset_prompt={"Which offset plots would you like to generate?"};
+    offset_prompt=["Which offset plots would you like to generate?"];
 
     %Generate options based off previous Formation(s) input
     if(Formation == "Cross")
-        offset_response_prompt = {"Cross","None"};
+        offset_response_prompt = ["Cross","None"];
         choice = 1;
     elseif(Formation == "Pentagon")
-        offset_response_prompt = {"Pentagon","None"};
+        offset_response_prompt = ["Pentagon","None"];
         choice = 2;
     else
-        offset_response_prompt = {"Cross","Pentagon","Both","None"};
+        offset_response_prompt = ["Cross","Pentagon","Both","None"];
         choice = 3;
     end
     
@@ -153,8 +153,8 @@ if(FormRead == "true")
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%  Rotation Preference Form %%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    rotation_prompt={"Please select a rotation preference"};
-    rotation_response_prompt = {"Rotate the Drones", "Rotate the Reciever"};
+    rotation_prompt=["Please select a rotation preference"];
+    rotation_response_prompt = ["Rotate the Drones", "Rotate the Reciever"];
 
     [indx,tf] = listdlg('ListSize',[400,50],...
                         'PromptString',rotation_prompt,...
@@ -172,9 +172,9 @@ if(FormRead == "true")
 else
     ExcelRead = "No";
     Defaults = "Yes";
-    Formation = "Pentagon";
+    Formation = "Cross";
     Center = "Yes";
-    Offset = "Pentagon";
+    Offset = "Cross";
     Rotate = "Reciever";
 end
 end

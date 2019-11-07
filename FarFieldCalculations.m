@@ -1,5 +1,3 @@
-clc
-clear
 %Name:          FarFieldCalculations
 %Description:   This program calculate the far-field pattern of a swarm of drones
 %               carrying scatters. 
@@ -16,14 +14,16 @@ clear
 %--------------------------------------------------------------------------               
 %OUTPUT:        Far field Patterns and interesting related plots
 %--------------------------------------------------------------------------
-
+clc
+clear
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% BEGIN FORM REQUEST AND RETURN VALUES  %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Set true to generate form, else set to false
+%Set true to generate form, else set to false.
 FormRead = "false";
 
+%Check GenerateForm.m for a list of defaults when form is not generated.
 [ExcelRead, Defaults, Formation, Center, Offset, Rotate] = GenerateForm(FormRead);
 
 
@@ -32,7 +32,7 @@ FormRead = "false";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if(ExcelRead == "Yes")
-    %TO DO: Implement Excel Read
+    %TO DO: Implement Excel Read.
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,63 +50,21 @@ NUM_OUTER_DRONES = 4; %4 - Cross, 5 - Pentagon
 NUM_DRONES = NUM_OUTER_DRONES + 1;
 Kn=0;  
 else
-    %TO DO, set user inputs
+    BEAM_DIRECTION = input("Input the desired beam direction");
+    BEAM_DIRECTION_2 = input("Input a redirected beam direction");
+    FREQUENCY = input("Input the operating frequency");
+    MAX_ERROR_ALLOWED = input("Input the maximum allowed error in [m]");
+    SWARM_RADIUS = input("Input the radius of the swarm in [m]");
+    NUM_OUTER_DRONES = input("Specify the # of outer drones in swarm");
+    NUM_DRONES = NUM_OUTER_DRONES + 1;
+    Kn = input("Specify a Kn Value");
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%  Generate Drone Formations  %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%TO DO: Implement Form option *Formation* to create both Patterns
-% Create seperate functions to minimize code block here
-
-if(Formation == "Cross" && Center == "Yes")
-    % Generate Cross Swarm Pattern
-    % WITH Center Antenna in the Middle
-    % With NUM_Drones - 1 antennas evenly spaced around the center
-    crossXY = zeros(NUM_DRONES, 2);
-    inc = 2 * pi / (NUM_DRONES-1);
-    for i = 2:NUM_DRONES
-        angle = (i-1) * inc;
-        [crossXY(i,1), crossXY(i,2)] = pol2cart(angle, SWARM_RADIUS);
-    end
-end
-
-if(Formation == "Pentagon" && Center == "Yes")
-    % Generate Pentagon Swarm Pattern
-    % WITH Center Antenna in the Middle
-    % With NUM_Drones - 1 antennas evenly spaced around the center
-    pentXY = zeros(NUM_DRONES,2);
-    inc = 2 * pi / (NUM_DRONES - 1);
-    for i = 2:NUM_DRONES 
-        angle = (i-1) * inc;
-        [pentXY(i,1), pentXY(i,2)] = pol2cart(angle, SWARM_RADIUS);
-    end
-end
-
-if(Formation == "Cross" && Center == "No")
-    % Generate Cross Swarm Pattern
-    % WITHOUT Center Antenna in the Middle
-    % With NUM_Drones - 1 antennas evenly spaced around the center
-    crossXY = zeros(NUM_DRONES-1, 2);
-    inc = 2 * pi / (NUM_DRONES-1);
-    for i = 1:NUM_DRONES
-        angle = i * inc;
-        [crossXY(i,1), crossXY(i,2)] = pol2cart(angle, SWARM_RADIUS);
-    end
-end
-
-if(Formation == "Pentagon" && Center == "No")
-    % Generate Pentagon Swarm Pattern
-    % WITHOUT Center Antenna in the Middle
-    % With NUM_Drones antennas evenly spaced aroudn the center
-    crossXY = zeros(NUM_DRONES-1, 2);
-    inc = 2 * pi / (NUM_DRONES-1);
-    for i = 1:NUM_DRONES
-        angle = i * inc;
-        [crossXY(i,1), crossXY(i,2)] = pol2cart(angle, SWARM_RADIUS);
-    end
-end
+[crossXY,pentXY] = GenerateFormations(Formation, Center,SWARM_RADIUS);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%  Constants  %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,7 +81,7 @@ phi_s = atan2(ys,xs); phi = 0:0.01:2*pi;
 % Generates z positions for each of the antennas by implementing
 %   eq 30. This equation assumes we are in the far field.
 
-%TO DO: Implement Form option *Formation* to create both Patterns
+% [crossZ,pentZ] = GenerateZ(Formation,crossXY,pentXY,BEAM_DIRECTION,FREQUENCY,NUM_DRONES);
 
 if(Formation == "Cross")
     swarm_z = CalcZPos(crossXY, BEAM_DIRECTION, FREQUENCY, NUM_DRONES);
@@ -193,19 +151,21 @@ end
 if(Formation == "Cross")
 norm = max(InitialField);     % Get max val to normalize
 figure(1);
+tiledlayout(1,1)
+nexttile;
 polarplot(phi, abs(InitialField)/abs(norm));  
 title('Cross Far Field Plot')
 rlim([0 1]);
-hold off
 end
 
 if(Formation == "Pentagon")
 norm = max(pentPattern);     % Get max val to normalize
 figure(1);
+tiledlayout(1,1)
+nexttile;
 polarplot(phi, abs(pentPattern)/abs(norm));  
 title('Cross Far Field Plot')
 rlim([0 1]);
-hold off
 end
 
 if(Formation == "Both")
@@ -227,17 +187,20 @@ end
 %   placed antennas in xy plane and the resulting far field 
 %   patterns.
 
-if(Offset == "Cross") %Top-Down View
+if(Offset == "Cross") 
     figure(2);
+    tiledlayout(2,2)
+    
+    nexttile; %Top-Down View
     scatter(crossXY(:,1), crossXY(:,2),'filled');
     title('Correct vs Misplaced: Top-Down View')
-    hold on
-    scatter(offset_pos(:,1), offset_pos(:,2));
     xlabel('X Axis')
     ylabel('Y Axis')
-    hold off  
+    hold on
+    scatter(offset_pos(:,1), offset_pos(:,2));
+    hold off
     
-    figure(3); % Side View
+    nexttile; % Side View
     scatter(crossXY(:,1), swarm_z(:),'filled');
     title('Correct vs Misplaced: Side View')
     xlabel('X Axis')
@@ -246,7 +209,7 @@ if(Offset == "Cross") %Top-Down View
     scatter(offset_pos(:,1), offset_pos(:,3));
     hold off
     
-    figure(4); %3D View
+    nexttile; % 3D View
     plot3(offset_pos(:,1), offset_pos(:,2), offset_pos(:,3), 'o');
     title('3D Position Plot')
     grid on
@@ -288,7 +251,7 @@ if(Offset == "Both")
 end
 
 if(Offset == "Cross") %TEMPORARY IF, until implementation complete
-figure(5);
+nexttile;
 polarplot(phi, abs(InitialField)/abs(norm));
 rlim([0 1]);
 title('Effect on Far Field Pattern')
@@ -322,14 +285,12 @@ for m = 1:NUM_DRONES    % This loop assigns the z positions.
     end
 end
 
-figure(6);
-choice = 2; %from 1-5
-scatter(xyRotate(choice,:,1),xyRotate(choice,:,2),[],(1:size(xyRotate,2)).','.');
-colormap(jet) %From blue to red for Drone 2
-title('Rotating swarm xy')
-hold off
-
-
+% figure(3);
+% choice = 2; %from 1-5
+% scatter(xyRotate(choice,:,1),xyRotate(choice,:,2),[],(1:size(xyRotate,2)).','.');
+% colormap(jet) %From blue to red for Drone 2
+% title('Rotating swarm xy')
+% hold off
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Generate rotating Far Field  %%%%%%%%%%%%%%%%%%%
@@ -356,7 +317,7 @@ end
 inc = pi/180;
 phi = inc:inc:2*pi; % phi is 360 degrees at intervals of 1 degree
 normRotate = max(rotMagnitudes);     % Get max val to normalize
-figure(7);
+figure(3);
 polarplot(phi, abs(rotMagnitudes)/abs(normRotate));
 title('Rotating swarm FarField')
 hold off;
