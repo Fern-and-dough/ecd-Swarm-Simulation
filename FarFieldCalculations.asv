@@ -114,23 +114,18 @@ phi_s = atan2(ys,xs); phi = 0:0.01:2*pi;
 %%%%%%%%%%%%%  Calculation of Jitter far field graphs  %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[cross_offset_pos, cross_offset_field,...
-    pent_offset_pos,pent_offset_field] = ...
-                                    GenerateOffsets(Offset,Center,...
-                                                    crossXY, pentXY,...
-                                                    crossZ,pentZ,...
-                                                    MAX_ERROR_ALLOWED,...
-                                                    FREQUENCY,NUM_DRONES);
+[offset_pos, offset_field] = GenerateOffsets(Formation,Center,...
+                                                crossXY, pentXY...
+                                                crosscrossZ,...
                                                 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%  Calculation of Rotating Swarm Field  %%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+                                                MAX_ERROR_ALLOWED,...
+                                                FREQUENCY, NUM_DRONES);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%  GRAPHING SECTION  %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%TO DO: Implement Form option *Formation* to create both Patterns
+% Create seperate functions to minimize code block here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%  Plot Initial FarField  %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,19 +151,7 @@ rlim([0 1]);
 end
 
 if(Formation == "Both")
-norm = max(crossField);     % Get max val to normalize
-figure(1);
-tiledlayout(1,2)
-
-nexttile;
-polarplot(phi, abs(crossField)/abs(norm));  
-title('Cross Far Field Plot')
-rlim([0 1]);
-
-nexttile;
-polarplot(phi, abs(pentField)/abs(norm));  
-title('Pentagon Far Field Plot')
-rlim([0 1]);
+% TO DO
 end
 
 % This graph will demonstrate that by varying the z position, we 
@@ -196,7 +179,7 @@ if(Offset == "Cross")
     xlabel('X Axis')
     ylabel('Y Axis')
     hold on
-    scatter(cross_offset_pos(:,1), cross_offset_pos(:,2));
+    scatter(offset_pos(:,1), offset_pos(:,2));
     hold off
     
     nexttile; % Side View
@@ -205,11 +188,11 @@ if(Offset == "Cross")
     xlabel('X Axis')
     ylabel('Z Axis')
     hold on
-    scatter(cross_offset_pos(:,1), cross_offset_pos(:,3));
+    scatter(offset_pos(:,1), offset_pos(:,3));
     hold off
     
     nexttile; % 3D View
-    plot3(cross_offset_pos(:,1), cross_offset_pos(:,2), cross_offset_pos(:,3), 'o');
+    plot3(offset_pos(:,1), offset_pos(:,2), offset_pos(:,3), 'o');
     title('3D Position Plot')
     grid on
     hold on
@@ -255,7 +238,7 @@ polarplot(phi, abs(crossField)/abs(norm));
 rlim([0 1]);
 title('Effect on Far Field Pattern')
 hold on
-polarplot(phi, abs(cross_offset_field)/abs(norm), '--' );
+polarplot(phi, abs(offset_field)/abs(norm), '--' );
 hold off
 end
 

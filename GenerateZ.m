@@ -14,7 +14,10 @@
 %
 %NOTE: All Asterisk options are default form values
 %--------------------------------------------------------------------------               
-function [crossZ,pentZ] = GenerateZ(Formation,Center,crossXY,pentXY,BEAM_DIRECTION,FREQUENCY,NUM_DRONES)
+function [crossZ,pentZ] = GenerateZ(Formation,Center,...
+                                    crossXY,pentXY,...
+                                    BEAM_DIRECTION,...
+                                    FREQUENCY,NUM_DRONES)
 
 %# of drones needed in each swarm
 if (Center == "No")

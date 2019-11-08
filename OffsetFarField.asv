@@ -28,8 +28,9 @@ phi_s = atan2(ys,xs);
 phi = 0:0.01:2*pi;
 Kn = 0;
 
+
 OffsetField = 0;
-offset_pos = zeros(NUM_DRONES,3);
+offset_pos = zeros(5,3);
 for i = 1:NUM_DRONES
     xp = swarm_xy(i,1) + (((rand-.5)*2) * MAX_ERROR_ALLOWED);
     yp = swarm_xy(i,2) + (((rand-.5)*2) * MAX_ERROR_ALLOWED);

@@ -172,9 +172,9 @@ if(FormRead == "true")
 else
     ExcelRead = "No";
     Defaults = "Yes";
-    Formation = "Pentagon";
+    Formation = "Cross";
     Center = "No";
-    Offset = "Pentagon";
+    Offset = "Cross";
     Rotate = "Reciever";
 end
 end

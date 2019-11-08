@@ -5,9 +5,11 @@
 %INPUT:         -TO DO-
 %--------------------------------------------------------------------------               
 %OUTPUT:        -TO DO-
-%
 %--------------------------------------------------------------------------
-function [crossField,pentField] = GenerateFarFields(Formation,Center,crossXY,pentXY,crossZ,pentZ,FREQUENCY,NUM_DRONES)
+function [crossField,pentField] = GenerateFarFields(Formation,Center,...
+                                                    crossXY,pentXY,...
+                                                    crossZ,pentZ,...
+                                                    FREQUENCY,NUM_DRONES)
 
 %# of drones needed in each swarm
 if (Center == "No")
