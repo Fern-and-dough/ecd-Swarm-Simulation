@@ -13,6 +13,7 @@
 %               pentZ(Returns pentZ antenna positions, or 0)
 %
 %NOTE: All Asterisk options are default form values
+%--------------------------------------------------------------------------               
 function [crossZ,pentZ] = GenerateZ(Formation,Center,crossXY,pentXY,BEAM_DIRECTION,FREQUENCY,NUM_DRONES)
 
 %# of drones needed in each swarm

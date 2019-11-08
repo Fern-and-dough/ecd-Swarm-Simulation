@@ -5,6 +5,7 @@
 %INPUT:         # of antennas.
 %--------------------------------------------------------------------------               
 %OUTPUT:        Swarm Coordinates for desired formation.
+%--------------------------------------------------------------------------               
 function [swarm] = SwarmNoCenter(NUM_DRONES,SWARM_RADIUS)
 swarm = zeros(NUM_DRONES-1, 2);
     inc = 2 * pi / (NUM_DRONES-1);

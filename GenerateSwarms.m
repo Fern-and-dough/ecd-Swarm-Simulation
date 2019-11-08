@@ -10,6 +10,7 @@
 %               pentXY (Returns pentXY antenna positions, or 0)
 %
 %NOTE: All Asterisk options are default form values
+%--------------------------------------------------------------------------               
 function [crossXY,pentXY] = GenerateSwarms(Formation, Center,SWARM_RADIUS)
 
 %# of drones needed in each swarm

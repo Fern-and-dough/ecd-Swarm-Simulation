@@ -1,0 +1,36 @@
+%Name:          GenerateFarFields
+%Description:   This function Generates Far Field patterns for the original 
+%               beam direction.
+%--------------------------------------------------------------------------
+%INPUT:         FormRead("true" or "false", will set default outputs if set
+%               to false.
+%--------------------------------------------------------------------------               
+%OUTPUT:        ExcelRead ("Yes" or "*No*")
+%               Defaults ("*Yes*" or "No")
+%               Formation ("*Cross*", "Pentagon", or "Both)
+%               Center ("*Yes*" or "No")
+%               Offset ("Cross", "Pentagon", "Both", or "*None*")
+%               Rotate ("*Reciever*" or "Drones")
+%
+%NOTE: All Asterisk options are default form values
+%--------------------------------------------------------------------------
+function [crossField,pentField] = GenerateFarFields(Formation,Center,crossXY,pentXY,crossZ,pentZ,FREQUENCY,NUM_DRONES)
+
+%# of drones needed in each swarm
+if (Center == "No")
+    CROSS = 4;
+    PENT = 5;
+else
+    CROSS = 5;
+    PENT = 6;
+end
+
+if(Formation == "Cross")
+    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, CROSS);
+end
+if(Formation == "Pentagon")
+    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, PENT);
+end
+
+end
+

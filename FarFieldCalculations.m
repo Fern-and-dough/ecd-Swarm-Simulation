@@ -85,31 +85,18 @@ phi_s = atan2(ys,xs); phi = 0:0.01:2*pi;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%  Calculation of far field graphs  %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Generate Far Field pattern for original beam direction.
-%TO DO: Implement Form option *Formation* to create both Patterns
 
-% [crossField,pentField] = GenerateFarFields(Formation,Center,crossXY,pentXY,crossZ,pentZ,FREQUENCY,NUM_DRONES);
-
-if(Formation == "Cross")
-    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, NUM_DRONES);
-end
-if(Formation == "Pentagon")
-    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, NUM_DRONES);
-end
-
+[crossField,pentField] = GenerateFarFields(Formation,Center,crossXY,pentXY,crossZ,pentZ,FREQUENCY,NUM_DRONES);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Recalculation using new theta  %%%%%%%%%%%%%%%%%
-%%%%%  WILL NEED AN OPTION IN THE FORM AND CODE BLOCK HERE %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Generate new z positions for the redirected beam.
 
-% crossZ_2 = CalcZPos(crossXY, BEAM_DIRECTION_2, FREQUENCY, NUM_DRONES);
+% Generate new z positions for the redirected beam.
+[crossZ2,pentZ2] = GenerateZ(Formation,Center,crossXY,pentXY,BEAM_DIRECTION_2,FREQUENCY,NUM_DRONES);
 
 % Calculation of redirected far field graph
-
-% RedirectedField = CalcFarField(crossXY, crossZ_2, FREQUENCY, NUM_DRONES);
-
+[crossField2,pentField2] = GenerateFarFields(Formation,Center,crossXY,pentXY,crossZ2,pentZ2,FREQUENCY,NUM_DRONES);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%  Calculation of Jitter far field graphs  %%%%%%%%%%%%
