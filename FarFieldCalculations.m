@@ -38,35 +38,29 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%  VARIABLES  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if(Defaults == "Yes")
-% Users may also change these variables for quick modifications to the
-% simulation.
-BEAM_DIRECTION = 45;        
-BEAM_DIRECTION_2 = 270;     % Second beam direction in degrees
-FREQUENCY = 1.2 * 10^(9);   % Frequency in Hz
-MAX_ERROR_ALLOWED = .01;    % Used to show effects of misplacements in xy
-SWARM_RADIUS = (6.25/100);       % Position of drones in cross pattern
 if (Center == "No")
-    NUM_CROSS = 4;
-    NUM_PENT = 5;
-else
-    NUM_CROSS = 5;
-    NUM_PENT = 6;
-end
-Kn=0;  
-else
-    BEAM_DIRECTION = input("Input the desired beam direction");
-    BEAM_DIRECTION_2 = input("Input a redirected beam direction");
-    FREQUENCY = input("Input the operating frequency");
-    MAX_ERROR_ALLOWED = input("Input the maximum allowed error in [m]");
-    SWARM_RADIUS = input("Input the radius of the swarm in [m]");
-    if (Center == "No")
         NUM_CROSS = 4;
         NUM_PENT = 5;
     else
         NUM_CROSS = 5;
         NUM_PENT = 6;
     end
+if(Defaults == "Yes")
+    % Users may also change these variables for quick modifications to the
+    % simulation.
+    BEAM_DIRECTION = 45;        
+    BEAM_DIRECTION_2 = 270;     % Second beam direction in degrees
+    FREQUENCY = 1.2 * 10^(9);   % Frequency in Hz
+    MAX_ERROR_ALLOWED = .01;    % Used to show effects of misplacements in xy
+    SWARM_RADIUS = (6.25/100);       % Position of drones in cross pattern
+    
+    Kn=0;  
+else
+    BEAM_DIRECTION = input("Input the desired beam direction");
+    BEAM_DIRECTION_2 = input("Input a redirected beam direction");
+    FREQUENCY = input("Input the operating frequency");
+    MAX_ERROR_ALLOWED = input("Input the maximum allowed error in [m]");
+    SWARM_RADIUS = input("Input the radius of the swarm in [m]");
     Kn = input("Specify a Kn Value");
 end
 
@@ -107,22 +101,12 @@ phi_s = atan2(ys,xs); phi = 0:0.01:2*pi;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Generate rotating Far Field  %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%YEET%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-
-% for m = 1:360
-%     Mag=0;
-%     for i = 1:5
-%         xp = xyRotate(i,m,1);
-%         yp = xyRotate(i,m,2);
-%         zp = xyRotate(i,m,3);
-%         alt1 = -k0 * xp * sin(theta_s) * cos(phi_s);
-%         alt2 = alt1 - k0 * yp * sin(theta_s) * sin(phi_s);
-%         alt3 = alt2 - k0 * zp * cos(theta_s);
-%         alt4 = exp(j * alt3);
-%         alt5 = alt4 * exp( j * k0 * (xp * cos(BEAM_DIRECTION) + yp * sin(BEAM_DIRECTION) ) );
-%         Mag = Mag + alt5;
-%     end
-%     rotMagnitudes(m) = Mag;
-% end
+[cross_rot_field,pent_rot_field] = RotateField(crossXY_rotate,...
+                                                pentXY_rotate,...
+                                                Formation,...
+                                                BEAM_DIRECTION,...
+                                                FREQUENCY,...
+                                                NUM_CROSS,NUM_PENT); 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%  Calculation of far field graphs  %%%%%%%%%%%%%%%%%%
@@ -368,12 +352,23 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Graphing Rotating Far Field  %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure(4);
+inc = pi/180;
+phi = inc:inc:2*pi; % phi is 360 degrees at intervals of 1 degree
+if(Formation == "Cross")
+    normRotate = max(cross_rot_field);     % Get max val to normalize
+    polarplot(phi, abs(cross_rot_field)/abs(normRotate));
+    title('Rotating swarm FarField')
+end
+if(Formation == "Pentagon")
+    normRotate = max(pent_rot_field);     % Get max val to normalize
+    polarplot(phi, abs(pent_rot_field)/abs(normRotate));
+    title('Rotating swarm FarField')
+end
 
-% inc = pi/180;
-% phi = inc:inc:2*pi; % phi is 360 degrees at intervals of 1 degree
-% normRotate = max(rotMagnitudes);     % Get max val to normalize
-% figure(3);
-% polarplot(phi, abs(rotMagnitudes)/abs(normRotate));
-% title('Rotating swarm FarField')
-% hold off;
+if(Formation == "Both")
+    figure(5);
+    %To do
+end
+
 
