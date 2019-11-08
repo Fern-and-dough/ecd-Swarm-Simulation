@@ -14,31 +14,23 @@
 %
 %NOTE: All Asterisk options are default form values
 %--------------------------------------------------------------------------               
-function [crossZ,pentZ] = GenerateZ(Formation,Center,...
+function [crossZ,pentZ] = GenerateZ(Formation,...
                                     crossXY,pentXY,...
                                     BEAM_DIRECTION,...
-                                    FREQUENCY,NUM_DRONES)
-
-%# of drones needed in each swarm
-if (Center == "No")
-    CROSS = 4;
-    PENT = 5;
-else
-    CROSS = 5;
-    PENT = 6;
-end
+                                    FREQUENCY,...
+                                    NUM_CROSS,NUM_PENT)
 
 if(Formation == "Cross")
-    crossZ = CalcZPos(crossXY, BEAM_DIRECTION, FREQUENCY, CROSS);
+    crossZ = CalcZPos(crossXY, BEAM_DIRECTION, FREQUENCY, NUM_CROSS);
     pentZ = 0;
 end
 if(Formation == "Pentagon")
-    pentZ = CalcZPos(pentXY, BEAM_DIRECTION, FREQUENCY, PENT);
+    pentZ = CalcZPos(pentXY, BEAM_DIRECTION, FREQUENCY, NUM_PENT);
     crossZ = 0;
 end
 if(Formation == "Both")
-    crossZ = CalcZPos(crossXY, BEAM_DIRECTION, FREQUENCY, CROSS);
-    pentZ = CalcZPos(pentXY, BEAM_DIRECTION, FREQUENCY, PENT);
+    crossZ = CalcZPos(crossXY, BEAM_DIRECTION, FREQUENCY, NUM_CROSS);
+    pentZ = CalcZPos(pentXY, BEAM_DIRECTION, FREQUENCY, NUM_PENT);
 end
 end
 

@@ -6,31 +6,23 @@
 %--------------------------------------------------------------------------               
 %OUTPUT:        -TO DO-
 %--------------------------------------------------------------------------
-function [crossField,pentField] = GenerateFarFields(Formation,Center,...
+function [crossField,pentField] = GenerateFarFields(Formation,...
                                                     crossXY,pentXY,...
                                                     crossZ,pentZ,...
-                                                    FREQUENCY,NUM_DRONES)
-
-%# of drones needed in each swarm
-if (Center == "No")
-    CROSS = 4;
-    PENT = 5;
-else
-    CROSS = 5;
-    PENT = 6;
-end
+                                                    FREQUENCY,...
+                                                    NUM_CROSS,NUM_PENT)
 
 if(Formation == "Cross")
-    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, CROSS);
+    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, NUM_CROSS);
     pentField = 0;
 end
 if(Formation == "Pentagon")
-    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, PENT);
+    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, NUM_PENT);
     crossField = 0;
 end
 if(Formation == "Both")
-    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, CROSS);
-    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, PENT);
+    crossField = CalcFarField(crossXY, crossZ, FREQUENCY, NUM_CROSS);
+    pentField = CalcFarField(pentXY, pentZ, FREQUENCY, NUM_PENT);
 end
 end
 

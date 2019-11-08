@@ -27,7 +27,6 @@ FormRead = "false";
 %Check GenerateForm.m for a list of defaults when form is not generated.
 [ExcelRead, Defaults, Formation, Center, Offset, Rotate] = GenerateForm(FormRead);
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% Load in Excel Sheet Data  %%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,8 +46,13 @@ BEAM_DIRECTION_2 = 270;     % Second beam direction in degrees
 FREQUENCY = 1.2 * 10^(9);   % Frequency in Hz
 MAX_ERROR_ALLOWED = .01;    % Used to show effects of misplacements in xy
 SWARM_RADIUS = (6.25/100);       % Position of drones in cross pattern
-NUM_OUTER_DRONES = 4; %4 - Cross, 5 - Pentagon
-NUM_DRONES = NUM_OUTER_DRONES + 1;
+if (Center == "No")
+    NUM_CROSS = 4;
+    NUM_PENT = 5;
+else
+    NUM_CROSS = 5;
+    NUM_PENT = 6;
+end
 Kn=0;  
 else
     BEAM_DIRECTION = input("Input the desired beam direction");
@@ -56,8 +60,13 @@ else
     FREQUENCY = input("Input the operating frequency");
     MAX_ERROR_ALLOWED = input("Input the maximum allowed error in [m]");
     SWARM_RADIUS = input("Input the radius of the swarm in [m]");
-    NUM_OUTER_DRONES = input("Specify the # of outer drones in swarm");
-    NUM_DRONES = NUM_OUTER_DRONES + 1;
+    if (Center == "No")
+        NUM_CROSS = 4;
+        NUM_PENT = 5;
+    else
+        NUM_CROSS = 5;
+        NUM_PENT = 6;
+    end
     Kn = input("Specify a Kn Value");
 end
 
@@ -68,6 +77,30 @@ end
 [crossXY,pentXY] = GenerateSwarms(Formation,Center,SWARM_RADIUS);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%  Calculation of Rotating Swarm Field  %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% xyRotate = zeros(NUM_DRONES,360,3); % holds antennas' rotating xy positions
+%     for m = 2:NUM_DRONES
+%         xyRotate(m,1,1) = crossXY(m,1);
+%         xyRotate(m,1,2) = crossXY(m,2);
+%         theta0 = atan(crossXY(m,2)/crossXY(m,1));
+%         for i = 2:360
+%             theta0 = theta0 + (pi/180);
+%             xyRotate(m,i,1) = SWARM_RADIUS * cos(theta0);
+%             xyRotate(m,i,2) = SWARM_RADIUS * sin(theta0);
+%                 if m == 4||m==3      % done to fix sign errors
+%                     xyRotate(m,i,1)= -xyRotate(m,i,1);
+%                     xyRotate(m,i,2)= -xyRotate(m,i,2);
+%                 end
+%         end
+%     end
+% 
+%     for m = 1:NUM_DRONES    % This loop assigns the z positions.
+%         for i = 1:360       % The drones hold their same z pos as they rotate.
+%              xyRotate(m,i,3) = crossZ(m); 
+%         end
+%     end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%  Constants  %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 c = 2.9992458*(10.^8); u0 = 4*pi*(10.^-7); e0 = 1/((c.^2)*(u0));
@@ -75,64 +108,54 @@ w = 2 * pi * FREQUENCY; k0 = w*sqrt(u0*e0); center_of_swarm = [25,0,100];
 xs = center_of_swarm(1); ys = center_of_swarm(2); zs = center_of_swarm(3);
 rs = norm(center_of_swarm); theta_s = acos(zs/rs);
 phi_s = atan2(ys,xs); phi = 0:0.01:2*pi;
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%  Implementation of Equation (30)  %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-[crossZ,pentZ] = GenerateZ(Formation,Center,...
+[crossZ,pentZ] = GenerateZ(Formation,...
                             crossXY,pentXY,...
                             BEAM_DIRECTION,...
-                            FREQUENCY,NUM_DRONES);
-
+                            FREQUENCY,...
+                            NUM_CROSS,NUM_PENT);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%  Calculation of far field graphs  %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-[crossField,pentField] = GenerateFarFields(Formation,Center,...
+[crossField,pentField] = GenerateFarFields(Formation,...
                                             crossXY,pentXY,...
                                             crossZ,pentZ,...
-                                            FREQUENCY,NUM_DRONES);
-
+                                            FREQUENCY,...
+                                            NUM_CROSS,NUM_PENT);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Recalculation using new theta  %%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Generate new z positions for the redirected beam.
-[crossZ2,pentZ2] = GenerateZ(Formation,Center,...
+[crossZ2,pentZ2] = GenerateZ(Formation,...
                                 crossXY,pentXY,...
                                 BEAM_DIRECTION_2,...
-                                FREQUENCY,NUM_DRONES);
-
+                                FREQUENCY,...
+                                NUM_CROSS,NUM_PENT);
 % Calculation of redirected far field graph
-[crossField2,pentField2] = GenerateFarFields(Formation,Center,...
+[crossField2,pentField2] = GenerateFarFields(Formation,...
                                             crossXY,pentXY,...
                                             crossZ2,pentZ2,...
-                                            FREQUENCY,NUM_DRONES);
-
+                                            FREQUENCY,...
+                                            NUM_CROSS,NUM_PENT);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%  Calculation of Jitter far field graphs  %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 [cross_offset_pos, cross_offset_field,...
     pent_offset_pos,pent_offset_field] = ...
-                                    GenerateOffsets(Offset,Center,...
+                                    GenerateOffsets(Offset,...
                                                     crossXY, pentXY,...
                                                     crossZ,pentZ,...
                                                     MAX_ERROR_ALLOWED,...
-                                                    FREQUENCY,NUM_DRONES);
+                                                    FREQUENCY,...
+                                                    NUM_CROSS,NUM_PENT);
                                                 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%  Calculation of Rotating Swarm Field  %%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%  GRAPHING SECTION  %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%  Plot Initial FarField  %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%  Plot Initial FarField  %%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if(Formation == "Cross")
@@ -262,28 +285,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%  Generate rotating swarm positions  %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if(Offset == "Cross")
-    xyRotate = zeros(NUM_DRONES,360,3); % holds antennas' rotating xy positions
-    for m = 2:NUM_DRONES
-        xyRotate(m,1,1) = crossXY(m,1);
-        xyRotate(m,1,2) = crossXY(m,2);
-        theta0 = atan(crossXY(m,2)/crossXY(m,1));
-        for i = 2:360
-            theta0 = theta0 + (pi/180);
-            xyRotate(m,i,1) = SWARM_RADIUS * cos(theta0);
-            xyRotate(m,i,2) = SWARM_RADIUS * sin(theta0);
-                if m == 4||m==3      % done to fix sign errors
-                    xyRotate(m,i,1)= -xyRotate(m,i,1);
-                    xyRotate(m,i,2)= -xyRotate(m,i,2);
-                end
-        end
-    end
-
-    for m = 1:NUM_DRONES    % This loop assigns the z positions.
-        for i = 1:360       % The drones hold their same z pos as they rotate.
-             xyRotate(m,i,3) = crossZ(m); 
-        end
-    end
+if(Offset == "Both")
+    
 
     % figure(3);
     % choice = 2; %from 1-5
