@@ -324,46 +324,22 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 figure(3);
-
+tiledlayout(2,2)
+nexttile
 if(Formation == "Cross")
-    tiledlayout(NUM_CROSS,1)
     for i = 1:NUM_CROSS
-        nexttile
-        scatter(crossXY_rotate(i,:,1),crossXY_rotate(i,:,2),[],(1:size(crossXY_rotate,2)).','.');
+    scatter(xyRotate(1,:,1),xyRotate(1,:,2),[],(1:size(xyRotate,2)).','.');
     end
-    colormap(jet) %From blue to red
-    title('Rotating Cross Swarm X & Y Values')
 end
 if(Formation == "Pentagon")
-    tiledlayout(NUM_PENT,1)
-    for i = 1:NUM_PENT
-        nexttile
-        scatter(pentXY_rotate(i,:,1),pentXY_rotate(i,:,2),[],(1:size(pentXY_rotate,2)).','.');
-    end
-    colormap(jet) %From blue to red
-    title('Rotating Pentagon Swarm X & Y Values')
+    
 end
-
 if(Formation == "Both")
-    tiledlayout(NUM_CROSS,1)
-    for i = 1:NUM_CROSS
-        nexttile
-        scatter(crossXY_rotate(i,:,1),crossXY_rotate(i,:,2),[],(1:size(crossXY_rotate,2)).','.');
-    end
-    colormap(jet) %From blue to red
-    title('Rotating Cross Swarm X & Y Values')
-    figure(4);
-    tiledlayout(NUM_PENT,1)
-    if(Formation == "Pentagon")
-        for i = 1:NUM_PENT
-            nexttile
-            scatter(pentXY_rotate(i,:,1),pentXY_rotate(i,:,2),[],(1:size(pentXY_rotate,2)).','.');
-        end
-    end
-    colormap(jet) %From blue to red
-    title('Rotating Pentagon Swarm X & Y Values')
+    
 end
-
+colormap(jet) %From blue to red for Drone 2
+title('Rotating swarm xy')
+hold off
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Graphing Rotating Far Field  %%%%%%%%%%%%%%%%%%%
